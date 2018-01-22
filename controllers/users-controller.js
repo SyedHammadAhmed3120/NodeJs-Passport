@@ -2,9 +2,10 @@ var validate = require('express-joi-validator');
 
 var usersService = require('../services/users-service');
 var userModel = require('../models/user');
+var credentialsModel = require('../models/credentials');
 
-module.exports = function(app) {
-    app.get('/users', function(req, res, next) {
+module.exports = function(app, passport) {
+    app.get('/users', passport.authenticate('jwt', { session: false }), function(req, res, next) {
         var limit = req.params.limit || 10;
         var skip = req.params.skip || 0;
         
@@ -17,7 +18,7 @@ module.exports = function(app) {
         });
     });
     
-    app.get('/users/:userId', function(req, res, next) {
+    app.get('/users/:userId', passport.authenticate('jwt', { session: false }), function(req, res, next) {
         var userId = req.params.userId;
         
         usersService.getUserById(userId)
@@ -41,8 +42,16 @@ module.exports = function(app) {
         });
     });
     
-    app.post('/users/login', function(req, res, next) {
+    app.post('/users/login', validate(credentialsModel), function(req, res, next) {
+        var credentials = req.body;
         
+        usersService.loginUser(credentials)
+        .then(function(results) {
+            res.status(200).json(results); 
+        })
+        .catch(function(err) {
+            res.status(err.statusCode).json(err.message);
+        });
     });
     
     app.put('/users/:userId', function(req, res, next) {

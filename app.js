@@ -10,6 +10,9 @@ dotenv.load();
 var app = express();
 var port = process.env.PORT;
 
+// Configure passport.
+require('./middlewares/passport-jwt')(passport);
+
 // Log requests.
 app.use(morgan('dev'));
 
@@ -17,7 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Call all routes.
-require('./controllers/users-controller')(app);
+require('./controllers/users-controller')(app, passport);
 
 // Start the server.
 app.listen(port, function() {
