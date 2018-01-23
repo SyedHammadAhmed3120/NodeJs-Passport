@@ -68,9 +68,11 @@ module.exports = {
         // Add additional properties.
         user.schema = 'User';
         user.created = dateParser.toInt(dateParser.get());
-        user.saltRounds = parseInt((Math.random() * 10) + 1);
-        user.password = bcrypt.hashSync(user.password, user.saltRounds);
         user.roles = [ 'User' ];
+        if(user.password) {
+            user.saltRounds = parseInt((Math.random() * 10) + 1);
+            user.password = bcrypt.hashSync(user.password, user.saltRounds);
+        }
         
         return new Promise(function(resolve, reject) {
             cloudant.insert(user, function(err, results) {

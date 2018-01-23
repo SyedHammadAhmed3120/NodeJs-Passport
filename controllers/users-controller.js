@@ -54,6 +54,15 @@ module.exports = function(app, passport) {
         });
     });
     
+    app.get('/users/login/facebook', passport.authenticate('facebook', { session: false }), function(req, res, next) { 
+        
+    });
+    
+    app.get('/users/login/facebook/callback', passport.authenticate('facebook', { session: false }), function(req, res, next) { 
+        // Returning the token.
+        res.status(200).json(req.user);
+    });
+    
     app.put('/users/:userId', function(req, res, next) {
             
     });

@@ -12,6 +12,7 @@ var port = process.env.PORT;
 
 // Configure passport.
 require('./middlewares/passport-jwt')(passport);
+require('./middlewares/passport-facebook')(passport);
 
 // Log requests.
 app.use(morgan('dev'));
